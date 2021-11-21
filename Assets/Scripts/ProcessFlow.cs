@@ -105,11 +105,11 @@ public class ProcessFlow : MonoBehaviour
     public void CookSkillElementsGotoLeft()
     {
         int size = _cookSkillList.Count;
-        if (InputBox != null && InputBox.transform.GetChild(1).gameObject != null)
+        if (InputBox != null && InputBox.transform.GetChild(1) != null && InputBox.transform.GetChild(1).gameObject != null)
         {
             foreach (GameObject obj in _cookSkillList)
             {
-                InputBox.transform.GetChild(1).gameObject.GetComponent<CookElement>().AddInfo(obj.transform.GetChild(0).GetComponent<Text>().text);
+                InputBox.transform.GetChild(1).gameObject.GetComponent<CookElement>().AddInfoToProcessList(obj.transform.GetChild(0).GetComponent<Text>().text);
             }
             Invoke("PutCookMaterialFromInputboxToProcessGrid", 2.0f);
         }

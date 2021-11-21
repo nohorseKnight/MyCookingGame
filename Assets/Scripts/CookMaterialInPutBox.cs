@@ -19,7 +19,6 @@ public class CookMaterialInPutBox : MonoBehaviour
     public void AddCookMaterial(GameObject cookMaterialObj)
     {
         GameObject newCookObject = Instantiate(cookMaterialObj, gameObject.transform);
-        //newCookObject.GetComponent<CookElement>().Move(new Vector3(0, -200, 0), 40);
     }
 
     public void ClearInputBox()
