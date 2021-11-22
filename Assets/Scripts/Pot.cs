@@ -35,6 +35,7 @@ public class Pot : MonoBehaviour
         //     newData._tasteSet.Add(data._name);
         // }
         elementInPotList.Add(newData);
+        gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text += newData.DataToString();
     }
 
     public void MoveElementToProcessGrid()
@@ -48,6 +49,7 @@ public class Pot : MonoBehaviour
             obj.GetComponent<Image>().color = new Color(1, 0, 0, 1);
         }
         elementInPotList.Clear();
+        gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
     }
 
     public void StartCooking()

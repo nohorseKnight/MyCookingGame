@@ -15,6 +15,35 @@ public class CookElementData
         _processList = new ArrayList();
         _tasteSet = new HashSet<string>();
     }
+
+    public string ProcessListToString()
+    {
+        string result = "";
+        foreach (string str in _processList)
+        {
+            result += str + " ";
+        }
+        return result;
+    }
+
+    public string TasteSetToString()
+    {
+        string result = "";
+        foreach (string str in _tasteSet)
+        {
+            result += str + " ";
+        }
+        return result;
+    }
+
+    public string DataToString()
+    {
+        string result = _name + "\n";
+        result += ProcessListToString() + "\n";
+        result += TasteSetToString() + "\n";
+
+        return result;
+    }
 }
 
 public class CookElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -32,7 +61,8 @@ public class CookElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     void Start()
     {
-        _data = new CookElementData();
+        _data = _data ?? new CookElementData();
+        _data._name = transform.GetChild(0).gameObject.GetComponent<Text>().text;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -50,6 +80,9 @@ public class CookElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        transform.SetParent(_orignalParent);
+        transform.localPosition = new Vector3(0, 0, 0);
+
         if (_triggerObj != null && _triggerObj.tag == "ProcessFlow" && gameObject.tag == "CookSkill")
         {
             _triggerObj.GetComponent<ProcessFlow>().AddCookSkill(gameObject);
@@ -58,17 +91,16 @@ public class CookElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         {
             _triggerObj.GetComponent<CookMaterialInPutBox>().AddCookMaterial(gameObject);
         }
-        else if (_triggerObj != null && _triggerObj.tag == "GarbageCan" && gameObject.tag == "CookMaterial")
+        else if (_triggerObj != null && _triggerObj.tag == "GarbageCan" && gameObject.tag == "CookMaterial" && gameObject.GetComponent<Image>().color != new Color(1, 1, 1, 1))
         {
-            //
+            Destroy(gameObject.transform.parent.gameObject);
         }
         else if (_triggerObj != null && _triggerObj.tag == "Pot" && gameObject.tag == "CookMaterial")
         {
-            //
+            _triggerObj.GetComponent<Pot>().AddElementIntoPot(_data);
+            Destroy(gameObject.transform.parent.gameObject);
         }
 
-        transform.SetParent(_orignalParent);
-        transform.position = _orignalPos;
         _triggerObj = null;
     }
 
@@ -97,30 +129,31 @@ public class CookElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         _data._processList.Add(info);
     }
 
-    public void Move(Vector3 offset, float moveSpeed)
+    public void Move(Vector3 destination, float moveSpeed)
     {
-        StartCoroutine(MoveBaseOffset(offset, moveSpeed));
+        StartCoroutine(MoveBasedestination(destination, moveSpeed));
     }
 
-    IEnumerator MoveBaseOffset(Vector3 offset, float moveSpeed)
+    IEnumerator MoveBasedestination(Vector3 destination, float moveSpeed)
     {
-        Debug.Log("MoveTileByTile");
+        // Debug.Log("MoveBasedestination");
+        Vector3 des = destination + transform.position;
 
-        Transform trans = transform;
-        trans.position += offset;
-
-        while ((transform.position.x != trans.position.x) || (transform.position.y != trans.position.y))
+        while ((transform.position.x != des.x) || (transform.position.y != des.y))
         {
             //Debug.Log(transform.position.ToString() + ", " + trans.position.ToString());
-            transform.position = Vector2.MoveTowards(transform.position, new Vector2(trans.position.x, trans.position.y), moveSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(des.x, des.y), moveSpeed * Time.deltaTime);
             yield return null;
         }
+
+        Destroy(gameObject);
     }
 
     public void SetSameInfo(CookElementData data)
     {
         _data = new CookElementData();
         _data._name = data._name;
+        gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = _data._name;
         foreach (string str in data._processList)
         {
             _data._processList.Add(str);

@@ -51,6 +51,7 @@ public class ProcessFlow : MonoBehaviour
 
         // Instantiate(cookSkillObject);
         GameObject newCookObject = Instantiate(cookSkillObject, gameObject.transform);
+        newCookObject.transform.localPosition = new Vector3(0, 0, 0);
         newCookObject.GetComponent<BoxCollider2D>().size = new Vector2(0, 0);
         if (_cookSkillList.Count == 0)
         {

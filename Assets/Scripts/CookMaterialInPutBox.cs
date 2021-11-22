@@ -19,6 +19,7 @@ public class CookMaterialInPutBox : MonoBehaviour
     public void AddCookMaterial(GameObject cookMaterialObj)
     {
         GameObject newCookObject = Instantiate(cookMaterialObj, gameObject.transform);
+        newCookObject.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public void ClearInputBox()
